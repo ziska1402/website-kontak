@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Kontak</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .header button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .search-bar {
+            background-color: #fff;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .contact-list {
+            padding: 0 20px;
+            margin-top: 10px;
+        }
+        .contact-list h2 {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .contact-list .contact-item {
+            font-size: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .contact-list .contact-item .name {
+            flex: 1;
+        }
+        .contact-list .contact-item .phone {
+            flex: 1;
+            color: #555;
+        }
+        .contact-list .contact-item .actions {
+            margin-left: 10px;
+        }
+        .add-contact-section {
+            background-color: #fff;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+        .add-contact-section input {
+            width: 45%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .add-contact-section button {
+            width: 10%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Pilih</h1>
+        <button onclick="toggleAddContact()">+</button>
+    </div>
+
+    <!-- Pencarian Kontak -->
+    <div class="search-bar">
+        <input type="text" id="cariNama" placeholder="Cari kontak" oninput="cariKontak()">
+    </div>
+
+    <!-- Daftar Kontak -->
+    <div class="contact-list" id="contactList">
+        <h2>Daftar Kontak</h2>
+    </div>
+
+    <!-- Formulir Tambah Kontak -->
+    <div class="add-contact-section" style="display: none;" id="addContactSection">
+        <input type="text" id="namaKontak" placeholder="Nama kontak">
+        <input type="tel" id="nomorKontak" placeholder="Nomor telepon">
+        <button onclick="tambahKontak()">Tambah</button>
+    </div>
+
+    <script>
+        let daftarKontak = [
+            {nama: "ICALL", nomor: "08123456789"},
+            {nama: "alif", nomor: "08198765432"},
+            {nama: "kcuh", nomor: "08176543210"},
+            {nama: "afa", nomor: "08112345678"}
+        ];
+
+        function tampilkanKontak(filteredKontak = daftarKontak) {
+            const contactListDiv = document.getElementById('contactList');
+            contactListDiv.innerHTML = '<h2>Daftar Kontak</h2>'; // Kosongkan daftar sebelumnya
+            filteredKontak.forEach((kontak, index) => {
+                const contactItem = `
+                    <div class="contact-item">
+                        <div class="name">${kontak.nama}</div>
+                        <div class="phone">${kontak.nomor}</div>
+                        <div class="actions">
+                            <button onclick="hapusKontak(${index})">Hapus</button>
+                        </div>
+                    </div>
+                `;
+                contactListDiv.innerHTML += contactItem;
+            });
+        }
+
+        function tambahKontak() {
+            const nama = document.getElementById('namaKontak').value;
+            const nomor = document.getElementById('nomorKontak').value;
+
+            // Cek apakah nomor sudah ada
+            const isExist = daftarKontak.some(kontak => kontak.nomor === nomor);
+
+            if (nama === "" || nomor === "") {
+                alert("Nama dan nomor telepon tidak boleh kosong!");
+                return;
+            }
+
+            if (isExist) {
+                alert("Nomor ini sudah ada di daftar kontak.");
+                return;
+            }
+
+            daftarKontak.push({ nama, nomor });
+            document.getElementById('namaKontak').value = '';
+            document.getElementById('nomorKontak').value = '';
+            tampilkanKontak();
+        }
+
+        function hapusKontak(index) {
+            daftarKontak.splice(index, 1);
+            tampilkanKontak();
+        }
+
+        function cariKontak() {
+            const query = document.getElementById('cariNama').value.toLowerCase();
+            const filteredKontak = daftarKontak.filter(kontak => kontak.nama.toLowerCase().includes(query));
+            tampilkanKontak(filteredKontak);
+        }
+
+        function toggleAddContact() {
+            const addContactSection = document.getElementById('addContactSection');
+            addContactSection.style.display = addContactSection.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        // Tampilkan daftar kontak awal saat halaman pertama kali dimuat
+        window.onload = function() {
+            tampilkanKontak();
+        }
+    </script>
+
+</body>
+</html>
